@@ -3,7 +3,6 @@ import os
 import numpy as np
 import plotly.colors
 import plotly.graph_objects as go
-import scipy.ndimage
 
 
 class TDSpectrum:
@@ -101,6 +100,25 @@ class TDSpectrum:
         '''Find index of first occurence of starting lowercase value v in list l'''
         v = v.lower()
         return [i for i, x in enumerate(l) if x.lower().startswith(v)][0]
+
+    @staticmethod
+    def _gaussian_filter1d(input_array, sigma, truncate=4.0):
+        radius = int(truncate * sigma + 0.5)
+        x = np.arange(-radius, radius + 1)
+        phi_x = np.exp(-0.5 / sigma**2 * x**2)
+        phi_x = phi_x / phi_x.sum()
+        padded = np.pad(input_array, radius, mode='reflect')
+        return np.convolve(padded, phi_x, mode='valid')
+
+    @staticmethod
+    def _median_filter1d(input_array, size):
+        if size < 1:
+            return input_array
+        pad_left = size // 2
+        pad_right = size - 1 - pad_left
+        padded = np.pad(input_array, (pad_left, pad_right), mode='reflect')
+        windows = np.lib.stride_tricks.sliding_window_view(padded, size)
+        return np.median(windows, axis=1)
 
     def read(self, filename, filestr="", format="") -> None:
         '''
@@ -475,7 +493,7 @@ class TDSpectrum:
         match method.lower():
             case 'gaussian':
                 for i in range(self.n_times):
-                    self.absorb[i, :] = scipy.ndimage.gaussian_filter1d(
+                    self.absorb[i, :] = self._gaussian_filter1d(
                         self.absorb[i, :], kwargs['sigma'] * scale)
             case 'sma':
                 window = int(kwargs['window'] * scale)
@@ -493,7 +511,7 @@ class TDSpectrum:
                 size = int(kwargs['size'] * scale)
                 size = size if size > 1 else 1
                 for i in range(self.n_times):
-                    self.absorb[i, :] = scipy.ndimage.median_filter(
+                    self.absorb[i, :] = self._median_filter1d(
                         self.absorb[i, :], size)
             case _:
                 raise ValueError(f'Unknown smoothing method: {method}')
