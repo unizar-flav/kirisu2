@@ -3,12 +3,19 @@
 [![python](https://img.shields.io/badge/python-3.10+-red.svg)](https://www.python.org/)
 [![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/unizar-flav/kirisu2/blob/master/kirisu2.ipynb)
+[![Open Web App](https://img.shields.io/badge/Open_Web_App-Streamlit-FF4B4B?logo=streamlit)](https://boneta.github.io/kirisu2/)
 
 
 *Simple editor for stopped-flow and other spectra*
 
 
 ## Usage
+
+### Web App
+You can use the application directly in your browser without installation:
+[**Launch Kirisu 2**](https://boneta.github.io/kirisu2/)
+
+### Jupyter Notebook
 It is expected to use the [Jupyter Notebook at Google Colab](https://colab.research.google.com/github/unizar-flav/kirisu2/blob/master/kirisu2.ipynb) to run the code.
 
 Run each cell in order, with special attention to the first one that only is needed to be executed once.
