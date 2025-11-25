@@ -10,9 +10,9 @@
   </head>
   <body>
     <div id="root"></div>
-    <script src="https://cdn.jsdelivr.net/npm/@stlite/browser@0.91.2/build/stlite.js"></script>
-    <script>
-      stlite.mount(
+    <script type="module">
+      import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.91.2/build/stlite.js";
+      mount(
         {
           requirements: ["numpy", "plotly", "scipy", "streamlit"],
           entrypoint: "ui.py",
