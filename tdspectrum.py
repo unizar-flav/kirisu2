@@ -537,16 +537,16 @@ class TDSpectrum:
                 raise ValueError(f'Unknown style to plot: {style}')
         return fig
 
-    def plot_tabs(self) -> None:
+    def plot_tabs(self, plotter="bokeh") -> None:
         '''Display all plot styles in different tabs'''
         if GOOGLE_COLAB:
             tabs = gwidgets.TabBar(TDSpectrum.plot_styles)
             for style in TDSpectrum.plot_styles:
                 with tabs.output_to(style, select=False):
-                    self.plot(style)
+                    self.plot(style, plotter=plotter)
         else:
             for style in TDSpectrum.plot_styles:
-                self.plot(style)
+                self.plot(style, plotter=plotter)
 
     def zero(self, lamb) -> None:
         '''Modify absorbances to make zero at a specific wavelength'''
