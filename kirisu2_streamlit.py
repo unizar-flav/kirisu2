@@ -166,16 +166,16 @@ else:
             with st.expander(f"File: {s.filename}", expanded=True):
                 st.text(str(s))
                 tab1, tab2, tab3 = st.tabs([
-                    "Wavelength vs Absorbance", "Time vs Absorbance",
+                    "Time vs Absorbance", "Wavelength vs Absorbance",
                     "Wavelength/Absorbance vs Time"
                 ])
                 with tab1:
                     if plot_2d_flag:
-                        st.plotly_chart(s.plot("2d-lambdas", "plotly"),
+                        st.plotly_chart(s.plot("2d-times", "plotly"),
                                         use_container_width=True)
                 with tab2:
                     if plot_2d_flag:
-                        st.plotly_chart(s.plot("2d-times", "plotly"),
+                        st.plotly_chart(s.plot("2d-lambdas", "plotly"),
                                         use_container_width=True)
                 with tab3:
                     if plot_3d_flag:
