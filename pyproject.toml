@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tdspectrum"
+description = "A utility package containing the TDSpectrum class for stopped-flow and other spectra analysis."
+dynamic = ["version"]
+authors = [
+    {name = "Sergio Boneta Martínez", email = "boneta@unizar.es"},
+]
+license = {text = "GNU General Public License v3 (GPLv3)"}
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+]
+
+[tool.setuptools]
+py-modules = ["tdspectrum"]
+
+[tool.setuptools.dynamic]
+version = {attr = "tdspectrum.__version__"}
