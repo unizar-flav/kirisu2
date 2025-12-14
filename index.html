@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Kirisu 2</title>
+    <link rel="icon" href="./logo.png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.91.2/build/stlite.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+      import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.91.2/build/stlite.js";
+      mount(
+        {
+          requirements: ["numpy", "plotly", "streamlit"],
+          entrypoint: "kirisu2_streamlit.py",
+          files: {
+            "kirisu2_streamlit.py": {
+              url: "./kirisu2_streamlit.py",
+            },
+            "tdspectrum.py": {
+              url: "./tdspectrum.py",
+            },
+            ".streamlit/config.toml": {
+              url: "./.streamlit/config.toml",
+            },
+            "logo.png": {
+              url: "./logo.png",
+            },
+          },
+        },
+        document.getElementById("root")
+      );
+    </script>
+  </body>
+</html>
