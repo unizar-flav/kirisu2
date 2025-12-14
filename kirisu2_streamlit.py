@@ -46,6 +46,8 @@ smooth_method = st.sidebar.segmented_control(
             **gaussian** - Gaussian Filter \\
             **sma** - Simple Moving Average \\
             **median** - Median Filter""")
+if smooth_method is None:
+    smooth_method = "no"
 smooth_level = st.sidebar.slider("Smoothing Level", 0.2, 3.0, 1.0, 0.1)
 
 # Zeroing
