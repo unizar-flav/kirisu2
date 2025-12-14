@@ -1,8 +1,28 @@
 import os
 
 import numpy as np
-import plotly.colors
-import plotly.graph_objects as go
+
+try:
+    PLOTLY = True
+    import plotly.colors
+    import plotly.graph_objects as go
+except ImportError:
+    PLOTLY = False
+
+try:
+    BOKEH = True
+    import bokeh.plotting, bokeh.palettes
+except ImportError:
+    BOKEH = False
+
+try:
+    GOOGLE_COLAB = True
+    from google.colab import widgets as gwidgets
+except ImportError:
+    GOOGLE_COLAB = False
+
+
+__version__ = "0.2.0"
 
 
 class TDSpectrum:
@@ -51,7 +71,7 @@ class TDSpectrum:
 
     plot_styles = ('2d-times', '2d-lambdas')
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None) -> None:
         self.times = np.array([])
         self.lambdas = np.array([])
         self.absorb = np.array([])
@@ -144,7 +164,7 @@ class TDSpectrum:
             'glb': self._read_glb,
             'csv': self._read_csv,
             'bk3a': self._read_bk3a
-        }
+            }
         # check filename/filestr and read file
         if not filename and not filestr:
             raise ValueError('Either filename or filestr must be provided')
@@ -175,71 +195,61 @@ class TDSpectrum:
         # parse header (delimited by '/')
         slash_ndx = self._find_ndx(data, '/')
         header = data[:slash_ndx]
-        data = data[slash_ndx + 1:]
-        self.type = header[self._find_ndx(header,
-                                          'type>')].split('>')[1].strip()
-        comment_init_ndx = self._find_ndx(header, '%')
-        comment_end_ndx = self._find_ndx(reversed(header), '%')
-        self.comment = "\n".join(header[comment_init_ndx + 1:len(header) -
-                                        comment_end_ndx - 1])
+        data = data[slash_ndx+1:]
+        self.type = header[self._find_ndx(header,'type>')].split('>')[1].strip()
+        comment_init_ndx = self._find_ndx(header,'%')
+        comment_end_ndx = self._find_ndx(reversed(header),'%')
+        self.comment = "\n".join(header[comment_init_ndx+1:len(header)-comment_end_ndx-1])
         # get dimensions
         n_spec = int(data[self._find_ndx(data, 'n_spec')].split()[1])
         n_lamb = int(data[self._find_ndx(data, 'n_lam')].split()[1])
         # times
         time_ndx = int(self._find_ndx(data, 'times:')) + 1
-        self.times = np.array(data[time_ndx:time_ndx + n_spec], dtype=float)
+        self.times = np.array(data[time_ndx:time_ndx+n_spec], dtype=float)
         # wavelengths
         lamb_ndx = int(self._find_ndx(data, 'lambda:')) + 1
-        self.lambdas = np.array(data[lamb_ndx:lamb_ndx + n_lamb], dtype=float)
+        self.lambdas = np.array(data[lamb_ndx:lamb_ndx+n_lamb], dtype=float)
         # absorbances
         self.absorb = np.zeros((self.n_times, self.n_lambdas), dtype=float)
         abs_ndx = int(self._find_ndx(data, 'data:')) + 1
         data = data[abs_ndx:]
         for i in range(self.n_times):
-            self.absorb[i, :] = np.array(data[i * self.n_lambdas:(i + 1) *
-                                              self.n_lambdas],
-                                         dtype=float)
+            self.absorb[i,:] = np.array(data[i*self.n_lambdas:(i+1)*self.n_lambdas], dtype=float)
 
     def _read_csv(self, filestr) -> None:
         '''Read a spectrum from a CSV file'''
         data = filestr.splitlines()
         if data[0].lower().startswith('prodatacsv'):
             # ProDataCSV
-            data = data[self._find_ndx(data, 'data:') + 1:]
+            data = data[self._find_ndx(data, 'data:')+1:]
             data = data[self._find_ndx(data, ','):]
-            self.times = np.array(
-                [i.strip() for i in data.pop(0).split(',') if i.strip()],
-                dtype=float)
+            self.times = np.array([i.strip() for i in data.pop(0).split(',') if i.strip()], dtype=float)
             self.absorb = np.empty((0, self.n_times), dtype=float)
             for row in data:
                 if not row.strip():
                     break
                 row = row.split(',')
                 self.lambdas = np.append(self.lambdas, float(row[0]))
-                self.absorb = np.vstack(
-                    (self.absorb, np.array(row[1:], dtype=float)))
+                self.absorb = np.vstack((self.absorb, np.array(row[1:], dtype=float)))
             self.absorb = self.absorb.T
         else:
             # standard CSV
             if not data[0].lower().startswith(','):
                 del data[0]
-            self.lambdas = np.array(
-                [i.strip() for i in data.pop(0).split(',') if i.strip()],
-                dtype=float)
+            self.lambdas = np.array([i.strip() for i in data.pop(0).split(',') if i.strip()], dtype=float)
             self.absorb = np.empty((0, self.n_lambdas), dtype=float)
             for row in data:
                 row = row.split(',')
                 self.times = np.append(self.times, float(row[0]))
-                self.absorb = np.vstack(
-                    (self.absorb, np.array(row[1:], dtype=float)))
+                self.absorb = np.vstack((self.absorb, np.array(row[1:], dtype=float)))
 
     def _read_bk3a(self, filestr) -> None:
         '''Read a spectrum from a BK3A file (Bio-Kine 3D Text File from BioLogic)'''
         data = filestr.splitlines()
         # parse header (until "_DATA")
         data_ndx = self._find_ndx(data, '\"_DATA\"')
-        header = data[:data_ndx + 1]
-        data = data[data_ndx + 1:]
+        header = data[:data_ndx+1]
+        data = data[data_ndx+1:]
         self.comment = "\n".join(header)
         # get bk3a sub-format
         format_ndx = self._find_ndx(header, '\"_FORMAT\"')
@@ -251,20 +261,18 @@ class TDSpectrum:
             case 'MATRIX':
                 self.lambdas = np.array(data.pop(0).split()[1:], dtype=float)
                 data = np.array([i.split() for i in data], dtype=float)
-                self.times = data[:, 0]
-                self.absorb = data[:, 1:]
+                self.times = data[:,0]
+                self.absorb = data[:,1:]
             case 'WTV':
                 data = np.array([i.split() for i in data], dtype=float)
-                self.lambdas = np.unique(data[:, 0])
-                self.times = np.unique(data[:, 1])
-                self.absorb = data[:, 2].reshape(
-                    (self.n_lambdas, self.n_times)).T
+                self.lambdas = np.unique(data[:,0])
+                self.times = np.unique(data[:,1])
+                self.absorb = data[:,2].reshape((self.n_lambdas, self.n_times)).T
             case 'TWV':
                 data = np.array([i.split() for i in data], dtype=float)
-                self.times = np.unique(data[:, 0])
-                self.lambdas = np.unique(data[:, 1])
-                self.absorb = data[:, 2].reshape(
-                    (self.n_times, self.n_lambdas))
+                self.times = np.unique(data[:,0])
+                self.lambdas = np.unique(data[:,1])
+                self.absorb = data[:,2].reshape((self.n_times, self.n_lambdas))
             case _:
                 raise ValueError(f'Unknown bk3a sub-format: {bk3a_format}')
 
@@ -346,7 +354,41 @@ class TDSpectrum:
                 [f'{j:.6f}' for j in self.absorb[i, :]]) + '\n'
         return data
 
-    def plot(self, style='2d-times') -> None:
+    def write(self, filename="", format="") -> None:
+        '''
+            Wrapper to write files based on extension/format
+
+            Supported formats: GLB, standard CSV, BK3A
+
+            Parameters
+            ----------
+            filename : str, optional
+                path to file to write
+                if not specified, is set to the original name
+                with '_t' appended to the basename
+            format : {'glb', 'csv', 'bk3a'}, optional
+                format of file to read
+                if not specified, the extension of the filename is used
+                if the extension is not recognized, assumed to be 'glb'
+        '''
+        formats = {'glb', 'csv', 'bk3a'}
+        # assign format based on input argument/file extension/default
+        filename = filename or self.filename_trim
+        extension = os.path.splitext(filename)[1][1:].lower()
+        if format:
+            if format.lower() in formats:
+                format = format.lower()
+            else:
+                raise ValueError(f'Unknown format to write: {format}')
+        elif extension in formats:
+            format = extension
+        else:
+            format = list(formats)[0]
+        # write file based on format
+        with open(filename, 'w') as f:
+            f.write(self.formatted_string(format))
+
+    def plot(self, style='2d-times', plotter="") -> object:
         '''
             Display a plot of the spectra
 
@@ -358,9 +400,71 @@ class TDSpectrum:
                              wavelength (x) vs. absorbance (y)
                 '2d-lambdas' : multiple superposed spectra (wavelengths)
                                time (x) vs. absorbance (y)
-                '3d' : 3D plot of spectra [not implemented]
+                '3d' : 3D plot of spectra [only with plotly]
                        time (x) vs. wavelength (y) vs. absorbance (z)
+            plotter : {'plotly', 'bokeh'}, optional
+                plotting library to use (def: 'plotly' if available, else 'bokeh' if available)
         '''
+        # default plot library
+        if not plotter:
+            if PLOTLY:
+                plotter = "plotly"
+            elif BOKEH:
+                plotter = "bokeh"
+            else:
+                raise ImportError("No plotting library is available.")
+
+        match plotter:
+            case "plotly":
+                if not PLOTLY:
+                    raise ImportError("Plotly is not available.")
+                return self._plot_plotly(style)
+            case "bokeh":
+                if not BOKEH:
+                    raise ImportError("Bokeh is not available.")
+                return self._plot_bokeh(style)
+            case _:
+                raise ValueError(f'Unknown plotting library: {plotter}')
+
+    def _plot_bokeh(self, style='2d-times') -> object:
+        '''Plot spectrum using bokeh'''
+        n_times = self.n_times
+        n_lambdas = self.n_lambdas
+
+        color_palette = bokeh.palettes.Viridis256
+
+        match style:
+            case '2d-times':
+                fig = bokeh.plotting.figure(title=self.filename,
+                                            x_axis_label='Wavelength (λ)',
+                                            y_axis_label='Absorbance',
+                                            width=800,
+                                            height=400,
+                                            x_range=self.lim_lambdas,
+                                            y_range=self.lim_absorb
+                                            )
+                for i in range(n_times):
+                    fig.line(self.lambdas, self.absorb[i,:], color=color_palette[i*256//n_times])
+            case '2d-lambdas':
+                fig = bokeh.plotting.figure(title=self.filename,
+                                            x_axis_label='Time',
+                                            y_axis_label='Absorbance',
+                                            width=800,
+                                            height=400,
+                                            x_range=self.lim_times,
+                                            y_range=self.lim_absorb
+                                            )
+                for i in range(n_lambdas):
+                    fig.line(self.times, self.absorb[:,i], color=color_palette[i*256//n_lambdas])
+            case '3d':
+                raise NotImplementedError()
+            case _:
+                raise ValueError(f'Unknown style to plot: {style}')
+        bokeh.plotting.show(fig)
+        return fig
+
+    def _plot_plotly(self, style='2d-times') -> object:
+        '''Plot spectrum using plotly'''
         n_times = self.n_times
         n_lambdas = self.n_lambdas
 
@@ -433,6 +537,17 @@ class TDSpectrum:
                 raise ValueError(f'Unknown style to plot: {style}')
         return fig
 
+    def plot_tabs(self) -> None:
+        '''Display all plot styles in different tabs'''
+        if GOOGLE_COLAB:
+            tabs = gwidgets.TabBar(TDSpectrum.plot_styles)
+            for style in TDSpectrum.plot_styles:
+                with tabs.output_to(style, select=False):
+                    self.plot(style)
+        else:
+            for style in TDSpectrum.plot_styles:
+                self.plot(style)
+
     def zero(self, lamb) -> None:
         '''Modify absorbances to make zero at a specific wavelength'''
         lamb_ndx = np.argmin(abs(self.lambdas - lamb))
@@ -493,14 +608,11 @@ class TDSpectrum:
         match method.lower():
             case 'gaussian':
                 for i in range(self.n_times):
-                    self.absorb[i, :] = self._gaussian_filter1d(
-                        self.absorb[i, :], kwargs['sigma'] * scale)
+                    self.absorb[i, :] = self._gaussian_filter1d(self.absorb[i, :], kwargs['sigma'] * scale)
             case 'sma':
                 window = int(kwargs['window'] * scale)
                 if window >= self.n_lambdas // 2:
-                    raise ValueError(
-                        "'window' must be smaller than half the number of wavelengths"
-                    )
+                    raise ValueError("'window' must be smaller than half the number of wavelengths")
                 for i in range(self.n_times):
                     self.absorb[i, :] = np.convolve(self.absorb[i, :],
                                                     np.ones(window) / window,
@@ -511,7 +623,6 @@ class TDSpectrum:
                 size = int(kwargs['size'] * scale)
                 size = size if size > 1 else 1
                 for i in range(self.n_times):
-                    self.absorb[i, :] = self._median_filter1d(
-                        self.absorb[i, :], size)
+                    self.absorb[i, :] = self._median_filter1d(self.absorb[i, :], size)
             case _:
                 raise ValueError(f'Unknown smoothing method: {method}')
