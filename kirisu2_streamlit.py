@@ -145,6 +145,7 @@ else:
     st.success(f"Successfully loaded {len(spectra)} spectra.")
 
     # Process Spectra
+    st.subheader("Processed Spectra")
     processed_spectra = []
     with st.spinner("Processing spectra..."):
         for spectrum in spectra:
@@ -167,21 +168,18 @@ else:
         for s in processed_spectra:
             with st.expander(f"File: {s.filename}", expanded=True):
                 st.text(str(s))
-                tab1, tab2, tab3 = st.tabs([
-                    "Time vs Absorbance", "Wavelength vs Absorbance",
-                    "Wavelength/Absorbance vs Time"
-                ])
+                tab1, tab2, tab3 = st.tabs(["Wavelength/Absorbance", "Time/Absorbance", "Time/Wavelength/Absorbance"])
                 with tab1:
                     if plot_2d_flag:
-                        st.plotly_chart(s.plot("2d-times", "plotly"),
+                        st.plotly_chart(s.plot("wavelength-absorbance", "plotly"),
                                         use_container_width=True)
                 with tab2:
                     if plot_2d_flag:
-                        st.plotly_chart(s.plot("2d-lambdas", "plotly"),
+                        st.plotly_chart(s.plot("time-absorbance", "plotly"),
                                         use_container_width=True)
                 with tab3:
                     if plot_3d_flag:
-                        st.plotly_chart(s.plot("3d", "plotly"), use_container_width=True)
+                        st.plotly_chart(s.plot("time-wavelength-absorbance", "plotly"), use_container_width=True)
 
     # Save Section
     st.markdown("---")
