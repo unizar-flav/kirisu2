@@ -540,9 +540,9 @@ class TDSpectrum:
     def plot_tabs(self, plotter="bokeh") -> None:
         '''Display all plot styles in different tabs'''
         if GOOGLE_COLAB:
-            tabs = gwidgets.TabBar(TDSpectrum.plot_styles)
-            for style in TDSpectrum.plot_styles:
-                style_name = style.replace('-', '/').title()
+            tab_names = [s.replace('-', '/').title() for s in TDSpectrum.plot_styles]
+            tabs = gwidgets.TabBar(tab_names)
+            for style, style_name in zip(TDSpectrum.plot_styles, tab_names):
                 with tabs.output_to(style_name, select=False):
                     self.plot(style, plotter=plotter)
         else:
