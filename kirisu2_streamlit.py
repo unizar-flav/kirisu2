@@ -31,10 +31,10 @@ input_format = st.sidebar.selectbox(
     "Leave empty to auto-detect from extension. If the format is not recognized, GLB will be assumed."
 )
 
-st.sidebar.header("2. Process Spectra")
-
 plot_2d_flag = st.sidebar.toggle("Plot 2D Spectra", value=True)
 plot_3d_flag = st.sidebar.toggle("Plot 3D Spectra", value=False)
+
+st.sidebar.header("2. Process Spectra")
 
 # Smoothing
 st.sidebar.subheader("Smoothing")
@@ -168,18 +168,19 @@ else:
         for s in processed_spectra:
             with st.expander(f"File: {s.filename}", expanded=True):
                 st.text(str(s))
-                tab1, tab2, tab3 = st.tabs(["Absorbance/Wavelength", "Absorbance/Time", "Absorbance/Time/Wavelength"])
-                with tab1:
-                    if plot_2d_flag:
-                        st.plotly_chart(s.plot("absorbance-wavelength", "plotly"),
-                                        use_container_width=True)
-                with tab2:
-                    if plot_2d_flag:
-                        st.plotly_chart(s.plot("absorbance-time", "plotly"),
-                                        use_container_width=True)
-                with tab3:
-                    if plot_3d_flag:
-                        st.plotly_chart(s.plot("absorbance-time-wavelength", "plotly"), use_container_width=True)
+                if plot_2d_flag or plot_3d_flag:
+                    tab1, tab2, tab3 = st.tabs(["Absorbance/Wavelength", "Absorbance/Time", "Absorbance/Time/Wavelength"])
+                    with tab1:
+                        if plot_2d_flag:
+                            st.plotly_chart(s.plot("absorbance-wavelength", "plotly"),
+                                            use_container_width=True)
+                    with tab2:
+                        if plot_2d_flag:
+                            st.plotly_chart(s.plot("absorbance-time", "plotly"),
+                                            use_container_width=True)
+                    with tab3:
+                        if plot_3d_flag:
+                            st.plotly_chart(s.plot("absorbance-time-wavelength", "plotly"), use_container_width=True)
 
     # Save Section
     st.markdown("---")
