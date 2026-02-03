@@ -168,18 +168,18 @@ else:
         for s in processed_spectra:
             with st.expander(f"File: {s.filename}", expanded=True):
                 st.text(str(s))
-                tab1, tab2, tab3 = st.tabs(["Wavelength/Absorbance", "Time/Absorbance", "Time/Wavelength/Absorbance"])
+                tab1, tab2, tab3 = st.tabs(["Absorbance/Wavelength", "Absorbance/Time", "Absorbance/Time/Wavelength"])
                 with tab1:
                     if plot_2d_flag:
-                        st.plotly_chart(s.plot("wavelength-absorbance", "plotly"),
+                        st.plotly_chart(s.plot("absorbance-wavelength", "plotly"),
                                         use_container_width=True)
                 with tab2:
                     if plot_2d_flag:
-                        st.plotly_chart(s.plot("time-absorbance", "plotly"),
+                        st.plotly_chart(s.plot("absorbance-time", "plotly"),
                                         use_container_width=True)
                 with tab3:
                     if plot_3d_flag:
-                        st.plotly_chart(s.plot("time-wavelength-absorbance", "plotly"), use_container_width=True)
+                        st.plotly_chart(s.plot("absorbance-time-wavelength", "plotly"), use_container_width=True)
 
     # Save Section
     st.markdown("---")

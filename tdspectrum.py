@@ -69,7 +69,7 @@ class TDSpectrum:
             limits of absorbances (min, max)
     '''
 
-    plot_styles = ('wavelength-absorbance', 'time-absorbance')
+    plot_styles = ('absorbance-wavelength', 'absorbance-time')
 
     def __init__(self, filename=None) -> None:
         self.times = np.array([])
@@ -388,19 +388,19 @@ class TDSpectrum:
         with open(filename, 'w') as f:
             f.write(self.formatted_string(format))
 
-    def plot(self, style='wavelength-absorbance', plotter="") -> object:
+    def plot(self, style='absorbance-wavelength', plotter="") -> object:
         '''
             Display a plot of the spectra
 
             Parameters
             ----------
             style : str, optional
-                type of plot to draw (def: 'wavelength-absorbance')
-                'wavelength-absorbance' : multiple superposed spectra (times)
+                type of plot to draw (def: 'absorbance-wavelength')
+                'absorbance-wavelength' : multiple superposed spectra (times)
                              wavelength (x) vs. absorbance (y)
-                'time-absorbance' : multiple superposed spectra (wavelengths)
+                'absorbance-time' : multiple superposed spectra (wavelengths)
                                time (x) vs. absorbance (y)
-                'time-wavelength-absorbance' : 3D plot of spectra [only with plotly]
+                'absorbance-time-wavelength' : 3D plot of spectra [only with plotly]
                        time (x) vs. wavelength (y) vs. absorbance (z)
             plotter : {'plotly', 'bokeh'}, optional
                 plotting library to use (def: 'plotly' if available, else 'bokeh' if available)
@@ -426,7 +426,7 @@ class TDSpectrum:
             case _:
                 raise ValueError(f'Unknown plotting library: {plotter}')
 
-    def _plot_bokeh(self, style='wavelength-absorbance') -> object:
+    def _plot_bokeh(self, style='absorbance-wavelength') -> object:
         '''Plot spectrum using bokeh'''
         n_times = self.n_times
         n_lambdas = self.n_lambdas
@@ -434,7 +434,7 @@ class TDSpectrum:
         color_palette = bokeh.palettes.Viridis256
 
         match style:
-            case 'wavelength-absorbance':
+            case 'absorbance-wavelength':
                 fig = bokeh.plotting.figure(title=self.filename,
                                             x_axis_label='Wavelength (λ)',
                                             y_axis_label='Absorbance',
@@ -445,7 +445,7 @@ class TDSpectrum:
                                             )
                 for i in range(n_times):
                     fig.line(self.lambdas, self.absorb[i,:], color=color_palette[i*256//n_times])
-            case 'time-absorbance':
+            case 'absorbance-time':
                 fig = bokeh.plotting.figure(title=self.filename,
                                             x_axis_label='Time',
                                             y_axis_label='Absorbance',
@@ -463,7 +463,7 @@ class TDSpectrum:
         bokeh.plotting.show(fig)
         return fig
 
-    def _plot_plotly(self, style='wavelength-absorbance') -> object:
+    def _plot_plotly(self, style='absorbance-wavelength') -> object:
         '''Plot spectrum using plotly'''
         n_times = self.n_times
         n_lambdas = self.n_lambdas
@@ -477,7 +477,7 @@ class TDSpectrum:
             return fig
 
         match style:
-            case 'wavelength-absorbance':
+            case 'absorbance-wavelength':
                 fig.update_layout(title=self.filename,
                                   xaxis_title='Wavelength (λ)',
                                   yaxis_title='Absorbance',
@@ -495,7 +495,7 @@ class TDSpectrum:
                                    mode='lines',
                                    line=dict(color=color),
                                    name=f'{self.times[i]:.2f} s'))
-            case 'time-absorbance':
+            case 'absorbance-time':
                 fig.update_layout(title=self.filename,
                                   xaxis_title='Time',
                                   yaxis_title='Absorbance',
@@ -512,7 +512,7 @@ class TDSpectrum:
                                    mode='lines',
                                    line=dict(color=color),
                                    name=f'{self.lambdas[i]:.2f} nm'))
-            case 'time-wavelength-absorbance':
+            case 'absorbance-time-wavelength':
                 fig.update_layout(title=self.filename,
                                   scene=dict(
                                       xaxis_title='Time',
