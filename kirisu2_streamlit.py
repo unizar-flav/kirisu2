@@ -136,7 +136,9 @@ else:
                     s.read(uploaded_file.name, filestr, format=input_format)
                     spectra.append(s)
                 except Exception as e:
-                    st.error(f"Error reading {uploaded_file.name}: {e}")
+                   st.error(f"Error reading {uploaded_file.name}.")
+                   st.error("It might not match the selected input format or file is corrupted.")
+                   st.warning("If several files are loaded with different extension, leave empty to auto-detect from extension")
 
     if not spectra:
         st.warning("No valid spectra loaded.")
@@ -160,27 +162,95 @@ else:
                 s.smooth(smooth_method, smooth_level)
 
             # Trim
+            #Save original limits before trim
+            s._original_limits = {
+                "times": s.lim_times,
+                "lambdas": s.lim_lambdas,
+                "absorb": s.lim_absorb 
+}
             s.trim([time_min, time_max], [lambda_min, lambda_max])
 
             processed_spectra.append(s)
 
     # Create tabs for each spectrum
+        
         for s in processed_spectra:
             with st.expander(f"File: {s.filename}", expanded=True):
                 st.text(str(s))
+        
+                # Show original ranges if available
+                if hasattr(s, "_original_limits"):
+                    t0, t1 = s._original_limits["times"]
+                    l0, l1 = s._original_limits["lambdas"]
+                    a0, a1 = s._original_limits["absorb"]
+                    
+                    st.caption(
+                        f"Original ranges — Time: [{t0:.2f}, {t1:.2f}] s, "
+                        f"Wavelength: [{l0:.2f}, {l1:.2f}] nm, "
+                        f"Absorbance: [{a0:.6f}, {a1:.6f}]"
+                    )
+        
                 if plot_2d_flag or plot_3d_flag:
-                    tab1, tab2, tab3 = st.tabs(["Absorbance/Wavelength", "Absorbance/Time", "Absorbance/Time/Wavelength"])
+                    tab1, tab2, tab3 = st.tabs([
+                        "Absorbance/Wavelength", 
+                        "Absorbance/Time", 
+                        "Absorbance/Time/Wavelength"
+                    ])
+        
+                    # --- Tab 1: Absorbance vs Wavelength ---
                     with tab1:
                         if plot_2d_flag:
-                            st.plotly_chart(s.plot("absorbance-wavelength", "plotly"),
-                                            use_container_width=True)
+                            fig = s.plot("absorbance-wavelength", "plotly")
+                            st.plotly_chart(fig, use_container_width=True)
+        
+                            # Export button
+                            svg_buffer = io.BytesIO()
+                            s.export(fig, svg_buffer)
+                            st.download_button(
+                                label="Export as SVG",
+                                data=svg_buffer.getvalue(),
+                                file_name=f"{os.path.splitext(s.filename_trim)[0]}_wavelength.svg",
+                                mime="image/svg+xml"
+                            )
+                        else:
+                            st.info("Enable *Plot 2D Spectra* in the sidebar to see this plot.")
+        
+                    # --- Tab 2: Absorbance vs Time ---
                     with tab2:
                         if plot_2d_flag:
-                            st.plotly_chart(s.plot("absorbance-time", "plotly"),
-                                            use_container_width=True)
+                            fig = s.plot("absorbance-time", "plotly")
+                            st.plotly_chart(fig, use_container_width=True)
+        
+                            # Export button
+                            svg_buffer = io.BytesIO()
+                            s.export(fig, svg_buffer)
+                            st.download_button(
+                                label="Export as SVG",
+                                data=svg_buffer.getvalue(),
+                                file_name=f"{os.path.splitext(s.filename_trim)[0]}_time.svg",
+                                mime="image/svg+xml"
+                            )
+                        else:
+                            st.info("Enable *Plot 2D Spectra* in the sidebar to see this plot.")
+        
+                    # --- Tab 3: Absorbance vs Time/Wavelength (3D) ---
                     with tab3:
                         if plot_3d_flag:
-                            st.plotly_chart(s.plot("absorbance-time-wavelength", "plotly"), use_container_width=True)
+                            fig = s.plot("absorbance-time-wavelength", "plotly")
+                            st.plotly_chart(fig, use_container_width=True)
+        
+                            # Export button
+                            svg_buffer = io.BytesIO()
+                            s.export(fig, svg_buffer)
+                            st.download_button(
+                                label="Export as SVG",
+                                data=svg_buffer.getvalue(),
+                                file_name=f"{os.path.splitext(s.filename_trim)[0]}_3d.svg",
+                                mime="image/svg+xml"
+                            )
+                        else:
+                            st.info("Enable *Plot 3D Spectra* in the sidebar to see this plot.")
+        
 
     # Save Section
     st.markdown("---")
