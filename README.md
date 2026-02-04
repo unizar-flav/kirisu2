@@ -13,7 +13,7 @@
 
 ### Web App
 The simplest method is to use the *Streamlit* application directly in your browser:  
-[**https://unizar-flav.github.io/kirisu2**](https://unizar-flav.github.io/kirisu2)
+*url not available for this branch, go to master to see url for master branch version*
 
 ### Jupyter Notebook
 Alternatively, the old entry point can be used through a [Jupyter Notebook at Google Colab](https://colab.research.google.com/github/unizar-flav/kirisu2/blob/master/kirisu2.ipynb) to run the code.
