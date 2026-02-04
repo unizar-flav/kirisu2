@@ -12,6 +12,7 @@ except ImportError:
 try:
     BOKEH = True
     import bokeh.plotting, bokeh.palettes
+    from bokeh.io import export as bkexport #export plots in svg
 except ImportError:
     BOKEH = False
 
@@ -656,4 +657,5 @@ class TDSpectrum:
         raise ValueError("Unknown figure type. Cannot export.")
     
                 
+
 
