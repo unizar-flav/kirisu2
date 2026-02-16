@@ -3,9 +3,6 @@ import os
 import zipfile
 from copy import deepcopy
 
-#limit number of threads in kaleido
-os.environ["KALEIDO_MAX_THREADS"] = "1"
-
 import streamlit as st
 
 from tdspectrum import TDSpectrum
@@ -207,14 +204,14 @@ else:
                             st.plotly_chart(fig, use_container_width=True)
         
                             # Export button
-                            svg_buffer = io.BytesIO()
-                            s.export(fig, svg_buffer)
-                            st.download_button(
-                                label="Export as SVG",
-                                data=svg_buffer.getvalue(),
-                                file_name=f"{os.path.splitext(s.filename_trim)[0]}_wavelength.svg",
-                                mime="image/svg+xml"
-                            )
+                            #svg_buffer = io.BytesIO()
+                            #s.export(fig, svg_buffer)
+                            #st.download_button(
+                            #    label="Export as SVG",
+                            #    data=svg_buffer.getvalue(),
+                            #    file_name=f"{os.path.splitext(s.filename_trim)[0]}_wavelength.svg",
+                            #    mime="image/svg+xml"
+                            #)
                         else:
                             st.info("Enable *Plot 2D Spectra* in the sidebar to see this plot.")
         
@@ -225,14 +222,14 @@ else:
                             st.plotly_chart(fig, use_container_width=True)
         
                             # Export button
-                            svg_buffer = io.BytesIO()
-                            s.export(fig, svg_buffer)
-                            st.download_button(
-                                label="Export as SVG",
-                                data=svg_buffer.getvalue(),
-                                file_name=f"{os.path.splitext(s.filename_trim)[0]}_time.svg",
-                                mime="image/svg+xml"
-                            )
+                            #svg_buffer = io.BytesIO()
+                            #s.export(fig, svg_buffer)
+                            #st.download_button(
+                            #    label="Export as SVG",
+                            #    data=svg_buffer.getvalue(),
+                            #    file_name=f"{os.path.splitext(s.filename_trim)[0]}_time.svg",
+                            #    mime="image/svg+xml"
+                            #)
                         else:
                             st.info("Enable *Plot 2D Spectra* in the sidebar to see this plot.")
         
@@ -243,14 +240,14 @@ else:
                             st.plotly_chart(fig, use_container_width=True)
         
                             # Export button
-                            svg_buffer = io.BytesIO()
-                            s.export(fig, svg_buffer)
-                            st.download_button(
-                                label="Export as SVG",
-                                data=svg_buffer.getvalue(),
-                                file_name=f"{os.path.splitext(s.filename_trim)[0]}_3d.svg",
-                                mime="image/svg+xml"
-                            )
+                           # svg_buffer = io.BytesIO()
+                           # s.export(fig, svg_buffer)
+                           # st.download_button(
+                           #     label="Export as SVG",
+                           #    data=svg_buffer.getvalue(),
+                           #     file_name=f"{os.path.splitext(s.filename_trim)[0]}_3d.svg",
+                           #     mime="image/svg+xml"
+                            #)
                         else:
                             st.info("Enable *Plot 3D Spectra* in the sidebar to see this plot.")
         
