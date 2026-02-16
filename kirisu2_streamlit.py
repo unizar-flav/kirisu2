@@ -3,6 +3,9 @@ import os
 import zipfile
 from copy import deepcopy
 
+#limit number of threads in kaleido
+os.environ["KALIEDO_MAX_THREADS"] = "1" 
+
 import streamlit as st
 
 from tdspectrum import TDSpectrum
