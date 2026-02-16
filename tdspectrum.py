@@ -630,7 +630,7 @@ class TDSpectrum:
                 raise ValueError(f'Unknown smoothing method: {method}')
     
     #new function to export plots in svg
-    def export(self, fig, buffer):
+   ''' def export(self, fig, buffer):
         """
         Save a plot (Bokeh or Plotly) to a file with high quality.
         """
@@ -654,8 +654,11 @@ class TDSpectrum:
             pass
     
         # If it is not Plotly or Bokeh
-        raise ValueError("Unknown figure type. Cannot export.")
+        raise ValueError("Unknown figure type. Cannot export.") 
+
+    '''
     
                 
+
 
 
