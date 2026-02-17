@@ -628,26 +628,25 @@ class TDSpectrum:
                     self.absorb[i, :] = self._median_filter1d(self.absorb[i, :], size)
             case _:
                 raise ValueError(f'Unknown smoothing method: {method}')
-    
-    #new function to export plots in svg
-# def export(self, fig, buffer):
-#     """
-#     Save a plot (Bokeh or Plotly) to a file with high quality.
-#     """
-# 
-#     try:
-#         if isinstance(fig, go.Figure):
-#             fig.write_image(buffer, format="svg")
-#             return
-#     except ImportError:
-#         pass
-# 
-#     try:
-#         if isinstance(fig, bokeh.plotting.Figure):
-#             fig.output_backend = "svg"
-#             bkexport.export_svg(fig, filename=buffer)
-#             return
-#     except ImportError:
-#         pass
-# 
-#     raise ValueError("Unknown figure type. Cannot export.")
+
+    # def export(self, fig, buffer):
+    #     """
+    #     Save a plot (Bokeh or Plotly) to a file with high quality.
+    #     """
+    #
+    #     try:
+    #         if isinstance(fig, go.Figure):
+    #             fig.write_image(buffer, format="svg")
+    #             return
+    #     except ImportError:
+    #         pass
+    #
+    #     try:
+    #         if isinstance(fig, bokeh.plotting.Figure):
+    #             fig.output_backend = "svg"
+    #             bkexport.export_svg(fig, filename=buffer)
+    #             return
+    #     except ImportError:
+    #         pass
+    #
+    #     raise ValueError("Unknown figure type. Cannot export.")
