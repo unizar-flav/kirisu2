@@ -201,7 +201,12 @@ else:
                     with tab1:
                         if plot_2d_flag:
                             fig = s.plot("absorbance-wavelength", "plotly")
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, use_container_width=True, config={
+                                'toImageButtonOptions': {
+                                    'format': 'svg',
+                                    'filename': f'{os.path.splitext(s.filename_trim)[0]}_abs-lamb'
+                                }
+                            })
         
                             # Export button
                             #svg_buffer = io.BytesIO()
@@ -219,7 +224,12 @@ else:
                     with tab2:
                         if plot_2d_flag:
                             fig = s.plot("absorbance-time", "plotly")
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, use_container_width=True, config={
+                                'toImageButtonOptions': {
+                                    'format': 'svg',
+                                    'filename': f'{os.path.splitext(s.filename_trim)[0]}_abs-time'
+                                }
+                            })
         
                             # Export button
                             #svg_buffer = io.BytesIO()
@@ -237,7 +247,12 @@ else:
                     with tab3:
                         if plot_3d_flag:
                             fig = s.plot("absorbance-time-wavelength", "plotly")
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, use_container_width=True, config={
+                                'toImageButtonOptions': {
+                                    'format': 'svg',
+                                    'filename': f'{os.path.splitext(s.filename_trim)[0]}_abs-time-lamb'
+                                }
+                            })
         
                             # Export button
                            # svg_buffer = io.BytesIO()
