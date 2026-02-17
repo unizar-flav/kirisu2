@@ -1,5 +1,4 @@
 bokeh
-kaleido
 numpy
 plotly
 streamlit
