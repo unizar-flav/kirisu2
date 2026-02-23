@@ -437,7 +437,7 @@ class TDSpectrum:
         match style:
             case 'absorbance-wavelength':
                 fig = bokeh.plotting.figure(title=self.filename,
-                                            x_axis_label='Wavelength (λ)',
+                                            x_axis_label='Wavelength (nm)',
                                             y_axis_label='Absorbance',
                                             width=800,
                                             height=400,
@@ -448,7 +448,7 @@ class TDSpectrum:
                     fig.line(self.lambdas, self.absorb[i,:], color=color_palette[i*256//n_times])
             case 'absorbance-time':
                 fig = bokeh.plotting.figure(title=self.filename,
-                                            x_axis_label='Time',
+                                            x_axis_label='Time (s)',
                                             y_axis_label='Absorbance',
                                             width=800,
                                             height=400,
@@ -480,7 +480,7 @@ class TDSpectrum:
         match style:
             case 'absorbance-wavelength':
                 fig.update_layout(title=self.filename,
-                                  xaxis_title='Wavelength (λ)',
+                                  xaxis_title='Wavelength (nm)',
                                   yaxis_title='Absorbance',
                                   width=800,
                                   height=400,
@@ -498,7 +498,7 @@ class TDSpectrum:
                                    name=f'{self.times[i]:.2f} s'))
             case 'absorbance-time':
                 fig.update_layout(title=self.filename,
-                                  xaxis_title='Time',
+                                  xaxis_title='Time (s)',
                                   yaxis_title='Absorbance',
                                   width=800,
                                   height=400,
@@ -516,8 +516,8 @@ class TDSpectrum:
             case 'absorbance-time-wavelength':
                 fig.update_layout(title=self.filename,
                                   scene=dict(
-                                      xaxis_title='Time',
-                                      yaxis_title='Wavelength (λ)',
+                                      xaxis_title='Time (s)',
+                                      yaxis_title='Wavelength (nm)',
                                       zaxis_title='Absorbance',
                                       xaxis=dict(range=self.lim_times),
                                       yaxis=dict(range=self.lim_lambdas),
@@ -650,3 +650,4 @@ class TDSpectrum:
     #         pass
     #
     #     raise ValueError("Unknown figure type. Cannot export.")
+
